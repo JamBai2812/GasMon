@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GasMon", "GasMon.csproj", "{F6F7E354-BC3A-4AD6-8006-57C62A2072BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GasMonTests", "GasMonTests\GasMonTests.csproj", "{56E3DB95-6B4A-44A3-85FA-28DBC72185E5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F6F7E354-BC3A-4AD6-8006-57C62A2072BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6F7E354-BC3A-4AD6-8006-57C62A2072BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6F7E354-BC3A-4AD6-8006-57C62A2072BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6F7E354-BC3A-4AD6-8006-57C62A2072BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56E3DB95-6B4A-44A3-85FA-28DBC72185E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56E3DB95-6B4A-44A3-85FA-28DBC72185E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56E3DB95-6B4A-44A3-85FA-28DBC72185E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56E3DB95-6B4A-44A3-85FA-28DBC72185E5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
