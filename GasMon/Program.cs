@@ -31,14 +31,23 @@ namespace GasMon
 
         public static void Main()
         {
+            var processor = new MessageProcessor();
+            
+            
             // var locationsFetcher = new LocationsFetcher(s3client);
             // var locations = locationsFetcher.GetLocations(bucketName, keyName);
             // Console.WriteLine(locations);
             
+            // using (var queue = new SubscribedQueue(sqsclient, snsclient, topicARN))
+            // {
+            //     
+            //     
+            // }
+            
             
             //Create Queue
             CreateQueueRequest createQueueRequest = new CreateQueueRequest();
-            createQueueRequest.QueueName = "GasMonQueue";
+            createQueueRequest.QueueName = "JamieGasMonQueue";
             CreateQueueResponse createQueueResponse =
                 sqsclient.CreateQueueAsync(createQueueRequest).Result;
             string queueUrl = createQueueResponse.QueueUrl;
@@ -46,26 +55,24 @@ namespace GasMon
             Console.WriteLine(queueUrl);
             
             //Subscribe queue to topic
-            snsclient.SubscribeQueueAsync(topicARN, sqsclient, queueUrl);
+            var subscriptionArn = snsclient.SubscribeQueueAsync(topicARN, sqsclient, queueUrl).Result;
 
-
+            //Collect Messages
             var timeNow = DateTime.Now;
-            var timeInOneMin = timeNow.AddSeconds(20);
+            var endTime = timeNow.AddSeconds(20);
             ReceiveMessageResponse result = new ReceiveMessageResponse();
-
-            while (DateTime.Now < timeInOneMin)
+            
+            while (DateTime.Now < endTime)
             {
-                //Collect Messages
+                
                 var receiveMessageRequest = new ReceiveMessageRequest
                 {
                     QueueUrl = queueUrl,
                     WaitTimeSeconds = 5
                 };
                 result = sqsclient.ReceiveMessageAsync(receiveMessageRequest).Result;
-
-
             }
-
+            
             //Process Messages
             if (result.Messages.Count != 0)
             {
@@ -80,11 +87,15 @@ namespace GasMon
             }
             
             //Also delete subscription
-            
+
+            snsclient.UnsubscribeAsync(subscriptionArn);
+
 
             //Delete Queue
             var deleteQueueRequest = new DeleteQueueRequest(queueUrl);
             sqsclient.DeleteQueueAsync(deleteQueueRequest);
+            
+            Console.WriteLine("finished.");
             
         }
     }
