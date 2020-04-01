@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Amazon.SQS.Model;
 using Newtonsoft.Json;
 
@@ -11,14 +12,15 @@ namespace GasMon
             
         }
 
-        public void ProcessMessage(Message message)
+        public void ProcessMessage(Message message, List<Location> locations)
         {
-            var body = message.Body;
-
-            var messageContent = JsonConvert.DeserializeObject<MessageBody>(body);
+            var messageContent = JsonConvert.DeserializeObject<MessageBody>(message.Body);
             var sensor = JsonConvert.DeserializeObject<SensorFromMessage>(messageContent.Message);
-            
-            Console.WriteLine(sensor.LocationId);
+            Console.WriteLine("Sensor:");
+            Console.WriteLine("Location Id: "+sensor.LocationId);
+            Console.WriteLine("Value: "+sensor.Value);
+            Console.WriteLine("Timestamp: "+sensor.Timestamp);
+            Console.WriteLine();
 
             // Console.WriteLine(messageContent.MessageId);
             // Console.WriteLine(body);
