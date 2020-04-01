@@ -9,8 +9,8 @@ namespace GasMon
     {
         private readonly IAmazonSimpleNotificationService _snsClient;
         private readonly IAmazonSQS _sqsClient;
-        private string _subscriptionArn;
-        public string QueueUrl;
+        private readonly string _subscriptionArn;
+        public readonly string QueueUrl;
         
         
         public SubscribedQueue(IAmazonSQS sqsClient, IAmazonSimpleNotificationService snsClient, string topicARN)
@@ -25,11 +25,12 @@ namespace GasMon
             CreateQueueResponse createQueueResponse =
                 _sqsClient.CreateQueueAsync(createQueueRequest).Result;
             QueueUrl = createQueueResponse.QueueUrl;
-            
+            Console.WriteLine("Queue created with URL:");
             Console.WriteLine(QueueUrl);
             
             //Subscribe queue to topic
             _subscriptionArn = _snsClient.SubscribeQueueAsync(topicARN, _sqsClient, QueueUrl).Result;
+            Console.WriteLine("Subscribed to topic.");
         }
         
         
@@ -37,10 +38,12 @@ namespace GasMon
         {
             //delete subscription
             _snsClient.UnsubscribeAsync(_subscriptionArn);
+            Console.WriteLine("Unsubscribed from topic.");
             
             //Delete Queue
             var deleteQueueRequest = new DeleteQueueRequest(QueueUrl);
             _sqsClient.DeleteQueueAsync(deleteQueueRequest);
+            Console.WriteLine("Queue deleted.");
         }
     }
 }
