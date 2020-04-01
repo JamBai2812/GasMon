@@ -61,9 +61,9 @@ namespace GasMon
                     //Process Messages
                     if (result.Messages.Count != 0)
                     {
-                        foreach (var message in result.Messages)
+                        foreach (Message message in result.Messages)
                         {
-                            Console.WriteLine("     "+message.MessageId);
+                            processor.ProcessMessage(message);
                         }
                     }
                     else
