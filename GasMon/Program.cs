@@ -36,9 +36,10 @@ namespace GasMon
             var processor = new MessageProcessor();
 
 
-            // var locationsFetcher = new LocationsFetcher(s3client);
-            // var locations = locationsFetcher.GetLocations(bucketName, keyName);
-            // Console.WriteLine(locations.Count());
+            var locationsFetcher = new LocationsFetcher(s3client);
+            var locations = locationsFetcher.GetLocations(bucketName, keyName);
+            var locationIds = locations.Select(l => l.Id).ToList();
+            
 
             
 
@@ -46,7 +47,7 @@ namespace GasMon
             {
                 //Collect Messages
                 var timeNow = DateTime.Now;
-                var endTime = timeNow.AddSeconds(5);
+                var endTime = timeNow.AddSeconds(10);
             
                 Console.WriteLine("Message Ids:");
             
@@ -64,7 +65,7 @@ namespace GasMon
                     {
                         foreach (Message message in result.Messages)
                         {
-                            processor.ProcessMessage(message);
+                            processor.ProcessMessage(message, locationIds);
                         }
                     }
                     else
