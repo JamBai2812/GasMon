@@ -38,26 +38,27 @@ namespace GasMon
 
             // var locationsFetcher = new LocationsFetcher(s3client);
             // var locations = locationsFetcher.GetLocations(bucketName, keyName);
-            // Console.WriteLine(locations);
+            // Console.WriteLine(locations.Count());
+
+            
 
             using (var queue = new SubscribedQueue(sqsclient, snsclient, topicARN))
             {
                 //Collect Messages
                 var timeNow = DateTime.Now;
-                var endTime = timeNow.AddSeconds(20);
-                ReceiveMessageResponse result = new ReceiveMessageResponse();
-
+                var endTime = timeNow.AddSeconds(5);
+            
                 Console.WriteLine("Message Ids:");
-
+            
                 while (DateTime.Now < endTime)
                 {
                     var receiveMessageRequest = new ReceiveMessageRequest
                     {
                         QueueUrl = queue.QueueUrl,
-                        WaitTimeSeconds = 5
+                        WaitTimeSeconds = 2
                     };
-                    result = sqsclient.ReceiveMessageAsync(receiveMessageRequest).Result;
-
+                    var result = sqsclient.ReceiveMessageAsync(receiveMessageRequest).Result;
+            
                     //Process Messages
                     if (result.Messages.Count != 0)
                     {
