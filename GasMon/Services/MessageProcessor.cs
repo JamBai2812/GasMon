@@ -14,7 +14,7 @@ namespace GasMon
         public MessageProcessor()
         {
             Readings = new List<ReadingFromSensor>();
-            Readings2 = new List<ReadingFromSensor>();
+            // Readings2 = new List<ReadingFromSensor>();
         }
 
         public void ProcessMessage(Message message, List<string> locations)
@@ -25,11 +25,11 @@ namespace GasMon
             if (locations.Contains(reading.LocationId) && !Readings.Contains(reading))
             {
                 Readings.Add(reading);
-                Readings2.Add(reading);
+                // Readings2.Add(reading);
             }
             else
             {
-                Console.WriteLine("Not a checked sensor.");
+                Console.WriteLine("Reading from an unchecked sensor.");
             }
 
 

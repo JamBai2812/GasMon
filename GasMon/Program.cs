@@ -56,7 +56,7 @@ namespace GasMon
                     var receiveMessageRequest = new ReceiveMessageRequest
                     {
                         QueueUrl = queue.QueueUrl,
-                        WaitTimeSeconds = 2
+                        WaitTimeSeconds = 5
                     };
                     var result = sqsclient.ReceiveMessageAsync(receiveMessageRequest).Result;
             
@@ -75,7 +75,7 @@ namespace GasMon
 
                 }
                 
-                Console.WriteLine("Readings: " + processor.Readings2.Count);
+                // Console.WriteLine("Readings: " + processor.Readings2.Count);
                 Console.WriteLine("Readings with removals: " + processor.Readings.Count);
                 
                 
