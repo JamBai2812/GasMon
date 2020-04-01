@@ -1,6 +1,6 @@
 ﻿namespace GasMon
 {
-    public class SensorFromMessage
+    public class ReadingFromSensor
     {
         public string LocationId { get; set; }
         public string EventId { get; set; }

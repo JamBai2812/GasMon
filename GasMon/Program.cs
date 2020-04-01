@@ -47,7 +47,7 @@ namespace GasMon
             {
                 //Collect Messages
                 var timeNow = DateTime.Now;
-                var endTime = timeNow.AddSeconds(10);
+                var endTime = timeNow.AddSeconds(30);
             
                 Console.WriteLine("Message Ids:");
             
@@ -72,6 +72,11 @@ namespace GasMon
                     {
                         Console.WriteLine("No messages found in the last 5 seconds.");
                     }
+                }
+
+                foreach (var reading in processor.Readings)
+                {
+                    Console.WriteLine(reading.Timestamp);
                 }
                 
                 Console.WriteLine("finished processing messages.");

@@ -8,19 +8,21 @@ namespace GasMon
 {
     public class MessageProcessor
     {
+        
+        public List<ReadingFromSensor> Readings { get; } 
         public MessageProcessor()
         {
-            
+            Readings = new List<ReadingFromSensor>();
         }
 
         public void ProcessMessage(Message message, List<string> locations)
         {
             var messageContent = JsonConvert.DeserializeObject<MessageBody>(message.Body);
-            var sensor = JsonConvert.DeserializeObject<SensorFromMessage>(messageContent.Message);
+            var reading = JsonConvert.DeserializeObject<ReadingFromSensor>(messageContent.Message);
 
-            if (locations.Contains(sensor.LocationId))
+            if (locations.Contains(reading.LocationId) && !Readings.Contains(reading))
             {
-                Console.WriteLine(sensor.LocationId);
+                Readings.Add(reading);
             }
             else
             {
