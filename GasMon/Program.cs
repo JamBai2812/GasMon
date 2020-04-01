@@ -72,12 +72,12 @@ namespace GasMon
                     {
                         Console.WriteLine("No messages found in the last 5 seconds.");
                     }
-                }
 
-                foreach (var reading in processor.Readings)
-                {
-                    Console.WriteLine(reading.Timestamp);
                 }
+                
+                Console.WriteLine("Readings: " + processor.Readings2.Count);
+                Console.WriteLine("Readings with removals: " + processor.Readings.Count);
+                
                 
                 Console.WriteLine("finished processing messages.");
             }
