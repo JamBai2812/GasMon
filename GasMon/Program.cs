@@ -42,7 +42,7 @@ namespace GasMon
             {
                 //Collect Messages
                             var timeNow = DateTime.Now;
-                            var endTime = timeNow.AddSeconds(20);
+                            var endTime = timeNow.AddSeconds(10);
                             ReceiveMessageResponse result = new ReceiveMessageResponse();
                             
                             while (DateTime.Now < endTime)
