@@ -9,12 +9,10 @@ namespace GasMon
     public class MessageProcessor
     {
         
-        public List<ReadingFromSensor> Readings { get; } 
-        public List<ReadingFromSensor> Readings2 { get; } 
+        public List<ReadingFromSensor> Readings { get; }
         public MessageProcessor()
         {
             Readings = new List<ReadingFromSensor>();
-            // Readings2 = new List<ReadingFromSensor>();
         }
 
         public void ProcessMessage(Message message, List<string> locations)
@@ -25,7 +23,6 @@ namespace GasMon
             if (locations.Contains(reading.LocationId) && !Readings.Contains(reading))
             {
                 Readings.Add(reading);
-                // Readings2.Add(reading);
             }
             else
             {

@@ -17,48 +17,48 @@ namespace GasMon
 {
     class Program
     {
-        private const string bucketName = "gasmonitoring-locationss3bucket-pgef0qqmgwba";
-        private const string keyName = "locations.json";
-
-        private const string topicARN =
+        private const string BucketName = "gasmonitoring-locationss3bucket-pgef0qqmgwba";
+        private const string KeyName = "locations.json";
+        private const string TopicArn =
             "arn:aws:sns:eu-west-2:099421490492:GasMonitoring-snsTopicSensorDataPart1-1YOM46HA51FB";
+        private static readonly RegionEndpoint BucketRegion = RegionEndpoint.EUWest2;
 
-        // Specify your bucket region (an example region is shown).
-        private static readonly RegionEndpoint bucketRegion = RegionEndpoint.EUWest2;
-        private static IAmazonS3 s3client = new AmazonS3Client(bucketRegion);
-        private static AmazonSQSClient sqsclient = new AmazonSQSClient(bucketRegion);
+        private static readonly IAmazonS3 S3Client = new AmazonS3Client(BucketRegion);
+        private static readonly IAmazonSQS SqsClient = new AmazonSQSClient(BucketRegion);
+        private static readonly IAmazonSimpleNotificationService SnsClient =
+            new AmazonSimpleNotificationServiceClient(BucketRegion);
 
-        private static AmazonSimpleNotificationServiceClient snsclient =
-            new AmazonSimpleNotificationServiceClient(bucketRegion);
-
+        private const int RunTime = 20;
+        private const int WaitTime = 5;
+        
         public static void Main()
         {
             var processor = new MessageProcessor();
 
 
-            var locationsFetcher = new LocationsFetcher(s3client);
-            var locations = locationsFetcher.GetLocations(bucketName, keyName);
+            var locationsFetcher = new LocationsFetcher(S3Client);
+            var locations = locationsFetcher.GetLocations(BucketName, KeyName);
             var locationIds = locations.Select(l => l.Id).ToList();
             
 
             
 
-            using (var queue = new SubscribedQueue(sqsclient, snsclient, topicARN))
+            using (var queue = new SubscribedQueue(SqsClient, SnsClient, TopicArn))
             {
                 //Collect Messages
                 var timeNow = DateTime.Now;
-                var endTime = timeNow.AddSeconds(30);
+                var endTime = timeNow.AddSeconds(RunTime);
             
-                Console.WriteLine("Message Ids:");
+                Console.WriteLine("Processing messages....");
             
                 while (DateTime.Now < endTime)
                 {
                     var receiveMessageRequest = new ReceiveMessageRequest
                     {
                         QueueUrl = queue.QueueUrl,
-                        WaitTimeSeconds = 5
+                        WaitTimeSeconds = WaitTime
                     };
-                    var result = sqsclient.ReceiveMessageAsync(receiveMessageRequest).Result;
+                    var result = SqsClient.ReceiveMessageAsync(receiveMessageRequest).Result;
             
                     //Process Messages
                     if (result.Messages.Count != 0)
@@ -70,7 +70,7 @@ namespace GasMon
                     }
                     else
                     {
-                        Console.WriteLine("No messages found in the last 5 seconds.");
+                        Console.WriteLine($"No messages found in the last {WaitTime} seconds.");
                     }
 
                 }
