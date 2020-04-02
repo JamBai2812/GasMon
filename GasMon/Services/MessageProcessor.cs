@@ -10,18 +10,17 @@ namespace GasMon
     public class MessageProcessor
     {
         public List<ReadingFromSensor> Readings { get; }
-        private List<string> _locationIds;
-        private int _waitTime = 5;
-        
+        private readonly List<string> _locationIds;
+        private const int _waitTime = 5;
+        private const long _expiryTime = 5000; //milliseconds
+
 
         public MessageProcessor(List<string> locationIds)
         {
             Readings = new List<ReadingFromSensor>();
             _locationIds = locationIds;
-
         }
-
-
+        
         public ReceiveMessageResponse CollectMessages(SubscribedQueue queue, IAmazonSQS sqsClient)
         {
             //Collect Messages
@@ -48,35 +47,50 @@ namespace GasMon
             }
         }
         
-
         private void ProcessMessage(Message message)
         {
-            var messageContent = JsonConvert.DeserializeObject<MessageBody>(message.Body);
-            var reading = JsonConvert.DeserializeObject<ReadingFromSensor>(messageContent.Message);
+            var reading = DeserializeMessage(message);
+            FilterAndAddReading(reading);
+            RemoveOneExpiredReading(reading);
+        }
 
-            if (ReadingFromCheckedLocation(reading) && !Readings.Contains(reading))
+        private ReadingFromSensor DeserializeMessage(Message message)
+        {
+            var messageContent = JsonConvert.DeserializeObject<MessageBody>(message.Body);
+            return JsonConvert.DeserializeObject<ReadingFromSensor>(messageContent.Message);
+        }
+
+        private void FilterAndAddReading(ReadingFromSensor reading)
+        {
+            if (ReadingFromCheckedLocation(reading) && IsNotDuplicate(reading))
             {
                 Readings.Add(reading);
+                Console.WriteLine("Collected reading.");
             }
             else
             {
-                Console.WriteLine("Reading from an unchecked sensor.");
-            }
-
-
-            if (Readings.Count != 0)
-            {
-                var first = Readings.FirstOrDefault(r => r.Timestamp < reading.Timestamp - 5000);
-                if (first != null)
-                {
-                    Readings.Remove(first);
-                }
+                Console.WriteLine("Found reading from an unchecked sensor.");
             }
         }
 
+        private void RemoveOneExpiredReading(ReadingFromSensor reading)
+        {
+            if (Readings.Count == 0) return;
+            var first = Readings.FirstOrDefault(r => r.Timestamp < reading.Timestamp - _expiryTime);
+            if (first != null)
+            {
+                Readings.Remove(first);
+            }
+        }
+        
         private bool ReadingFromCheckedLocation(ReadingFromSensor reading)
         {
             return _locationIds.Contains(reading.LocationId);
+        }
+
+        private bool IsNotDuplicate(ReadingFromSensor reading)
+        {
+            return !Readings.Contains(reading);
         }
     }
 }
