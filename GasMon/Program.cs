@@ -45,7 +45,7 @@ namespace GasMon
 
             using (var queue = new SubscribedQueue(SqsClient, SnsClient, TopicArn))
             {
-                //Collect Messages
+                
                 var timeNow = DateTime.Now;
                 var endTime = timeNow.AddSeconds(RunTime);
             
@@ -53,17 +53,12 @@ namespace GasMon
             
                 while (DateTime.Now < endTime)
                 {
-                    var receiveMessageRequest = new ReceiveMessageRequest
-                    {
-                        QueueUrl = queue.QueueUrl,
-                        WaitTimeSeconds = WaitTime
-                    };
-                    var result = SqsClient.ReceiveMessageAsync(receiveMessageRequest).Result;
+                    var messageResponse = processor.CollectMessages(queue , WaitTime, SqsClient);
             
                     //Process Messages
-                    if (result.Messages.Count != 0)
+                    if (messageResponse.Messages.Count != 0)
                     {
-                        foreach (Message message in result.Messages)
+                        foreach (var message in messageResponse.Messages)
                         {
                             processor.ProcessMessage(message, locationIds);
                         }
@@ -72,7 +67,6 @@ namespace GasMon
                     {
                         Console.WriteLine($"No messages found in the last {WaitTime} seconds.");
                     }
-
                 }
                 
                 // Console.WriteLine("Readings: " + processor.Readings2.Count);
