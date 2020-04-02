@@ -33,12 +33,12 @@ namespace GasMon
         
         public static void Main()
         {
-            var processor = new MessageProcessor();
-
-
             var locationsFetcher = new LocationsFetcher(S3Client);
             var locations = locationsFetcher.GetLocations(BucketName, KeyName);
             var locationIds = locations.Select(l => l.Id).ToList();
+            var processor = new MessageProcessor(locationIds);
+
+
             
 
             
@@ -52,7 +52,7 @@ namespace GasMon
                 while (DateTime.Now < endTime)
                 {
                     var messageResponse = processor.CollectMessages(queue, SqsClient);
-                    processor.ProcessMessagesFromResponse(messageResponse, locationIds);
+                    processor.ProcessMessagesFromResponse(messageResponse);
                 }
                 
                 Console.WriteLine("Readings with removals: " + processor.Readings.Count);

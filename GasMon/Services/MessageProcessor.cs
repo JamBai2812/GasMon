@@ -10,11 +10,15 @@ namespace GasMon
     public class MessageProcessor
     {
         public List<ReadingFromSensor> Readings { get; }
+        private List<string> _locationIds;
         private int _waitTime = 5;
+        
 
-        public MessageProcessor()
+        public MessageProcessor(List<string> locationIds)
         {
             Readings = new List<ReadingFromSensor>();
+            _locationIds = locationIds;
+
         }
 
 
@@ -29,13 +33,13 @@ namespace GasMon
             return sqsClient.ReceiveMessageAsync(receiveMessageRequest).Result;
         }
 
-        public void ProcessMessagesFromResponse(ReceiveMessageResponse messageResponse, List<string> locationIds)
+        public void ProcessMessagesFromResponse(ReceiveMessageResponse messageResponse)
         {
             if (messageResponse.Messages.Count != 0)
             {
                 foreach (var message in messageResponse.Messages)
                 {
-                    ProcessMessage(message, locationIds);
+                    ProcessMessage(message);
                 }
             }
             else
@@ -45,12 +49,12 @@ namespace GasMon
         }
         
 
-        private void ProcessMessage(Message message, List<string> locations)
+        private void ProcessMessage(Message message)
         {
             var messageContent = JsonConvert.DeserializeObject<MessageBody>(message.Body);
             var reading = JsonConvert.DeserializeObject<ReadingFromSensor>(messageContent.Message);
 
-            if (locations.Contains(reading.LocationId) && !Readings.Contains(reading))
+            if (ReadingFromCheckedLocation(reading) && !Readings.Contains(reading))
             {
                 Readings.Add(reading);
             }
@@ -68,6 +72,11 @@ namespace GasMon
                     Readings.Remove(first);
                 }
             }
+        }
+
+        private bool ReadingFromCheckedLocation(ReadingFromSensor reading)
+        {
+            return _locationIds.Contains(reading.LocationId);
         }
     }
 }
