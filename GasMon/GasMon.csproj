@@ -9,7 +9,7 @@
       <PackageReference Include="AWSSDK.S3" Version="3.3.110.43" />
       <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.141" />
       <PackageReference Include="AWSSDK.SQS" Version="3.3.102.84" />
-      <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     </ItemGroup>
 
 </Project>
